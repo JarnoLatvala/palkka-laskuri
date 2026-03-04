@@ -1,0 +1,80 @@
+# -----------------------
+# Python bytecode / cache
+# -----------------------
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# -----------------------
+# Virtual environments
+# -----------------------
+venv/
+env/
+.venv/
+.env/
+
+# -----------------------
+# Packaging / distribution
+# -----------------------
+build/
+dist/
+*.egg-info/
+.eggs/
+*.whl
+*.tar.gz
+*.zip
+
+# -----------------------
+# VS Code
+# -----------------------
+.vscode/
+.history/
+*.code-workspace
+
+# -----------------------
+# OS-specific
+# -----------------------
+# macOS
+.DS_Store
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# -----------------------
+# Logs and temp files
+# -----------------------
+*.log
+*.tmp
+*.bak
+*.swp
+*.py~
+*.pyo
+*.pyd
+
+# -----------------------
+# Testing / coverage
+# -----------------------
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.pytest_cache/
+
+# -----------------------
+# Jupyter / notebooks
+# -----------------------
+.ipynb_checkpoints/
+
+# -----------------------
+# Secrets / credentials
+# -----------------------
+.env
+*.secret
