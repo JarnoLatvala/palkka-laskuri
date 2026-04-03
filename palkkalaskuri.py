@@ -102,6 +102,12 @@ def minutes_in_ranges(start_utc: datetime, end_utc: datetime):
 def is_sunday(start_utc: datetime) -> bool:
     return _to_local(start_utc).weekday() == 6   # 6 = Sunday
 
+# Tapahtumat jotka ohitetaan laskennassa (vapaat, poissaolot jne.)
+SKIP_CODES = {"x", "v"}
+
+def should_skip(summary: str) -> bool:
+    return summary.strip().lower() in SKIP_CODES
+
 
 # ── Main application ────────────────────────────────────────────────────────────
 class PalkkalaskuriApp(tk.Tk):
@@ -197,11 +203,11 @@ class PalkkalaskuriApp(tk.Tk):
         self._row(wage_card, "UTC-offset (h, FI kesä=+3)", "utc_offset", "3")
 
         # Bonuses section
-        self._section(left, "03 · LISÄT (% tuntipalkasta)")
+        self._section(left, "03 · LISÄT (€/h päälle)")
         bonus_card = self._card(left)
-        self._row(bonus_card, "Iltalisä  (18–23)",      "evening_pct", "15")
-        self._row(bonus_card, "Yölisä    (23–06)",       "night_pct",   "30")
-        self._row(bonus_card, "Sunnuntailisä (100% = kaksinkertainen)", "sunday_pct",  "100")
+        self._row(bonus_card, "Iltalisä  (18–23) €/h",   "evening_pct", "1.50")
+        self._row(bonus_card, "Yölisä    (23–06) €/h",   "night_pct",   "3.00")
+        self._row(bonus_card, "Sunnuntailisä (100% = 2x palkka) %", "sunday_pct", "100")
 
         # Deductions section
         self._section(left, "04 · VÄHENNYKSET (%)")
@@ -357,8 +363,8 @@ class PalkkalaskuriApp(tk.Tk):
         LOCAL_OFFSET = timedelta(hours=offset_h)
 
         hourly     = self._get("hourly_wage", 12.5)
-        ev_pct     = self._get("evening_pct", 15) / 100
-        ni_pct     = self._get("night_pct",   30) / 100
+        ev_pct     = self._get("evening_pct", 1.5)
+        ni_pct     = self._get("night_pct",   3.0)
         su_pct     = self._get("sunday_pct", 100) / 100
         tax_pct    = self._get("tax_pct",     22) / 100
         unemp_pct  = self._get("unemp_pct",  1.5) / 100
@@ -371,13 +377,15 @@ class PalkkalaskuriApp(tk.Tk):
         total_mins  = 0
 
         for summary, start, end in sorted(self.events, key=lambda x: x[1]):
+            if should_skip(summary):
+                continue
             mins_total = int((end - start).total_seconds() // 60)
             normal_m, evening_m, night_m = minutes_in_ranges(start, end)
             sunday = is_sunday(start)
 
             base    = (mins_total / 60) * hourly
-            ev_add  = (evening_m  / 60) * hourly * ev_pct
-            ni_add  = (night_m    / 60) * hourly * ni_pct
+            ev_add  = (evening_m  / 60) * ev_pct
+            ni_add  = (night_m    / 60) * ni_pct
             su_add  = base * su_pct if sunday else 0.0
             gross   = base + ev_add + ni_add + su_add
 
