@@ -8,6 +8,7 @@ from tkinter import ttk, filedialog, messagebox
 from datetime import datetime, timezone, timedelta
 import re
 import os
+import holidays
 
 # ── Color palette ──────────────────────────────────────────────────────────────
 BG       = "#0f1117"
@@ -66,6 +67,9 @@ NIGHT_END     = 6    # 06:00 local (next day)
 
 LOCAL_OFFSET = timedelta(hours=3)   # Finland UTC+3 (EEST); adjust if needed
 
+fin_holidays = holidays.Finland(datetime.now().year) 
+
+
 
 def _to_local(dt: datetime) -> datetime:
     return dt + LOCAL_OFFSET
@@ -99,8 +103,9 @@ def minutes_in_ranges(start_utc: datetime, end_utc: datetime):
     return max(normal_min, 0), evening_min, night_min
 
 
-def is_sunday(start_utc: datetime) -> bool:
-    return _to_local(start_utc).weekday() == 6   # 6 = Sunday
+def is_sunday_or_holiday(start_utc: datetime) -> bool:
+    local_dt = _to_local(start_utc)
+    return local_dt.weekday() == 6 or local_dt.date() in fin_holidays
 
 # Tapahtumat jotka ohitetaan laskennassa (vapaat, poissaolot jne.)
 SKIP_CODES = {"x", "v"}
@@ -381,7 +386,7 @@ class PalkkalaskuriApp(tk.Tk):
                 continue
             mins_total = int((end - start).total_seconds() // 60)
             normal_m, evening_m, night_m = minutes_in_ranges(start, end)
-            sunday = is_sunday(start)
+            sunday = is_sunday_or_holiday(start)
 
             base    = (mins_total / 60) * hourly
             ev_add  = (evening_m  / 60) * ev_pct
