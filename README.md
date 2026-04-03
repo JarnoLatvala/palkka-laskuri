@@ -13,6 +13,8 @@ Oletuksena windows
 
 3. jos ei ole versiota lataa python esim https://www.youtube.com/watch?v=C3bOxcILGu4
 
-4. muuten mene kansioon terminalissa, jossa palkkalaskuri.py ja avaa se pythonilla komennolla cmd:ssä kirjoittamalla python palkkalasku.py
+4. Kirjoita terminalissa: pip install holidays
+
+5. muuten mene kansioon terminalissa, jossa palkkalaskuri.py ja avaa se pythonilla komennolla cmd:ssä kirjoittamalla python palkkalasku.py
 voit myös klikata ladattua tiedosto oikealla hiirennapilla ja sitten > open with > python
 
