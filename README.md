@@ -1,3 +1,8 @@
+Lataa koneelle python tiedosto githubista
+
+1. Paina tässä projektissa palkkalaskuri.py
+2. Download rawfile se latauksen kuva oikealla ylänurkassa.
+
 Miten käyttää:
 
 Oletuksena windows
